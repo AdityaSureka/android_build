@@ -128,6 +128,7 @@ PRODUCT_PACKAGES += \
     uiautomator \
     telephony-common \
     mms-common \
+    voip-common \
     zoneinfo.dat \
     zoneinfo.idx \
     zoneinfo.version
