@@ -24,11 +24,8 @@ PRODUCT_PACKAGES += \
     app_process \
     applypatch \
     bmgr \
-<<<<<<< HEAD
     bootanimation \
-=======
     bugreport \
->>>>>>> e762d6787bfe2cef470d77fae7afe73a1321a5ea
     content \
     dhcpcd \
     dhcpcd-run-hooks \
