@@ -19,6 +19,10 @@
 # devices (including non-phones and non-tablets), modify
 # core_minimal.mk instead.
 
+PRODUCT_BRAND := generic
+PRODUCT_DEVICE := generic
+PRODUCT_NAME := core
+
 PRODUCT_PACKAGES += \
     ApplicationsProvider \
     BackupRestoreConfirmation \
