@@ -418,18 +418,19 @@ def WriteFullOTAPackage(input_zip, output_zip):
   if OPTIONS.wipe_user_data:
     script.FormatPartition("/data")
 
-  script.Print("                                        ");
-  script.Print("     Ultimatum ROM - formerly Xylon     ");
-  script.Print("         Android 4.2.2 JDQ39E           ");
-  script.Print("     Simple                             ");
-  script.Print("         Fast                           ");
-  script.Print("            Smooth                      ");
-  script.Print("                 on your hands.         ");
-  script.Print("    Stock like too. More to customize.  ");
-  script.Print("                                        ");
-  script.Print("       And yes, words are floating      ");
-  script.Print("            in thin air. =)             ");
-  script.Print("                                        ");
+  script.Print("")
+  script.Print("")
+  script.Print("Illusion")
+  script.Print("")
+  script.Print("")
+  script.Print("")
+  script.Print("*******************************************")
+  script.Print("*                                         *")
+  script.Print("*                                         *")
+  script.Print("*           PREPPING ILLUSION       *")
+  script.Print("*                                         *")
+  script.Print("*                                         *")
+  script.Print("*******************************************")
 
   script.Print("Erasing System...")
 
@@ -440,7 +441,13 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.Print("Mounting System...")
   script.Mount("/system")
   script.ShowProgress(0.5, 40)
-  script.Print("Installing System...")
+  script.Print("*******************************************")
+  script.Print("*                                         *")
+  script.Print("*                                         *")
+  script.Print("*           INSTALLING ILLUSION     *")
+  script.Print("*                                         *")
+  script.Print("*                                         *")
+  script.Print("*******************************************")
   script.UnpackPackageDir("system", "/system")
   script.Print("Creating Symlinks...") 
 
@@ -453,10 +460,24 @@ def WriteFullOTAPackage(input_zip, output_zip):
   Item.GetMetadata(input_zip)
   Item.Get("system").SetPermissions(script)
 
+  script.Print("*******************************************")
+  script.Print("*                                         *")
+  script.Print("*                                         *")
+  script.Print("*             FLASHING KERNEL       *")
+  script.Print("*                                         *")
+  script.Print("*                                         *")
+  script.Print("*******************************************")
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
   script.ShowProgress(0.2, 0)
 
+  script.Print("*******************************************")
+  script.Print("*                                         *")
+  script.Print("*                                         *")
+  script.Print("*           RUNNING BACKUP TOOL *")
+  script.Print("*                                         *")
+  script.Print("*                                         *")
+  script.Print("*******************************************")
   if OPTIONS.backuptool:
     script.ShowProgress(0.2, 10)
     script.RunBackup("restore")
