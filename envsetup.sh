@@ -145,11 +145,11 @@ function setpaths()
     export ANDROID_EABI_TOOLCHAIN=
     local ARCH=$(get_build_var TARGET_ARCH)
     case $ARCH in
-        x86) toolchaindir=x86/i686-linux-android-$targetgccversion/bin
+        x86) toolchaindir=x86/i686-linux-android-4.6/bin
             ;;
         arm) toolchaindir=arm/arm-linux-androideabi-4.9/bin
             ;;
-        mips) toolchaindir=mips/mipsel-linux-android-$targetgccversion/bin
+        mips) toolchaindir=mips/mipsel-linux-android-4.6/bin
             ;;
         *)
             echo "Can't find toolchain for unknown architecture: $ARCH"
@@ -537,7 +537,7 @@ function lunch()
         answer=$1
     else
         print_lunch_menu
-        echo -n "Which would you like? [aosp_arm-eng] "
+        echo -n "Which would you like? [full-eng] "
         read answer
     fi
 
@@ -545,7 +545,7 @@ function lunch()
 
     if [ -z "$answer" ]
     then
-        selection=aosp_arm-eng
+        selection=full-eng
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
         if [ $answer -le ${#LUNCH_MENU_CHOICES[@]} ]
@@ -732,7 +732,7 @@ function m()
 {
     T=$(gettop)
     if [ "$T" ]; then
-        make -C $T -f build/core/main.mk $@
+        make -C $T $@
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
     fi
@@ -747,12 +747,12 @@ function findmakefile()
         T=`PWD= /bin/pwd`
         if [ -f "$T/Android.mk" ]; then
             echo $T/Android.mk
-            \cd $HERE
+            cd $HERE > /dev/null
             return
         fi
-        \cd ..
+        cd .. > /dev/null
     done
-    \cd $HERE
+    cd $HERE > /dev/null
 }
 
 function mm()
@@ -901,12 +901,12 @@ function cproj()
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
         T=$PWD
         if [ -f "$T/Android.mk" ]; then
-            \cd $T
+            cd $T
             return
         fi
-        \cd ..
+        cd .. > /dev/null
     done
-    \cd $HERE
+    cd $HERE > /dev/null
     echo "can't find Android.mk"
 }
 
@@ -1033,7 +1033,7 @@ function gdbclient()
        echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
        echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
-       gdbwrapper "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
+       $ANDROID_TOOLCHAIN/$GDB -x "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
   else
        echo "Unable to determine build system output dir."
    fi
@@ -1305,7 +1305,7 @@ function smoketest()
         return
     fi
 
-    (\cd "$T" && mmm tests/SmokeTest) &&
+    (cd "$T" && make SmokeTest SmokeTestApp) &&
       adb uninstall com.android.smoketest > /dev/null &&
       adb uninstall com.android.smoketest.tests > /dev/null &&
       adb install $ANDROID_PRODUCT_OUT/data/app/SmokeTestApp.apk &&

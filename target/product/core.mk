@@ -20,6 +20,8 @@
 # core_minimal.mk instead.
 
 PRODUCT_PACKAGES += \
+    ApplicationsProvider \
+    BackupRestoreConfirmation \
     BasicDreams \
     Browser \
     Contacts \
@@ -27,19 +29,59 @@ PRODUCT_PACKAGES += \
     DefaultContainerService \
     DownloadProvider \
     DownloadProviderUi \
+    HTMLViewer \
     Home \
     KeyChain \
+    MediaProvider \
+    PackageInstaller \
     PicoTts \
+    SettingsProvider \
     SharedStorageBackup \
     TelephonyProvider \
     UserDictionaryProvider \
     VpnDialogs \
     abcc \
+    apache-xml \
     atrace \
+    bouncycastle \
+    bu \
+    cacerts \
+    com.android.location.provider \
+    com.android.location.provider.xml \
+    core \
+    core-junit \
+    dalvikvm \
+    dexdeps \
+    dexdump \
+    dexlist \
+    dexopt \
+    dmtracedump \
+    drmserver \
+    dx \
+    ext \
+    framework-res \
+    hprof-conv \
+    icu.dat \
+    installd \
+    ip \
+    ip-up-vpn \
+    ip6tables \
+    iptables \
+    keystore \
+    keystore.default \
     libandroidfw \
+    libOpenMAXAL \
+    libOpenSLES \
     libaudiopreprocessing \
     libaudioutils \
     libbcc \
+    libcrypto \
+    libdownmix \
+    libdvm \
+    libdrmframework \
+    libdrmframework_jni \
+    libexpat \
+    libfilterfw \
     libfilterpack_imageproc \
     libgabi++ \
     libanalogradiobroadcasting \
@@ -48,10 +90,14 @@ PRODUCT_PACKAGES += \
     libjavacore \
     libkeystore \
     libmdnssd \
+    libnativehelper \
     libnfc_ndef \
     libportable \
     libpowermanager \
     libspeexresampler \
+    libsqlite_jni \
+    libssl \
+    libstagefright \
     libstagefright_chromium_http \
     libstagefright_soft_aacdec \
     libstagefright_soft_aacenc \
@@ -69,14 +115,26 @@ PRODUCT_PACKAGES += \
     libstagefright_soft_rawdec \
     libstagefright_soft_vorbisdec \
     libstagefright_soft_vpxdec \
-    libstagefright_soft_vpxenc \
     libvariablespeed \
     libwebrtc_audio_preprocessing \
+    libwilhelm \
+    libz \
+    make_ext4fs \
     mdnsd \
-    mms-common \
     requestsync \
+    screencap \
+    sensorservice \
+    lint \
+    uiautomator \
     telephony-common \
-    voip-common
+    mms-common \
+    zoneinfo.dat \
+    zoneinfo.idx \
+    zoneinfo.version
+
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.usb.rc:root/init.usb.rc \
+    system/core/rootdir/init.trace.rc:root/init.trace.rc \
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
@@ -91,7 +149,10 @@ ifeq ($(WITH_HOST_DALVIK),true)
         libjavacore \
         libssl \
         libz-host \
-        dalvik
+        dalvik \
+        zoneinfo-host.dat \
+        zoneinfo-host.idx \
+        zoneinfo-host.version
 endif
 
 ifeq ($(HAVE_SELINUX),true)

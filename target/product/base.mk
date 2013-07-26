@@ -18,6 +18,8 @@
 PRODUCT_PACKAGES += \
     20-dns.conf \
     95-configured \
+    adb \
+    adbd \
     am \
     android.policy \
     android.test.runner \
@@ -27,35 +29,62 @@ PRODUCT_PACKAGES += \
     bootanimation \
     bugreport \
     content \
+    dbus-daemon \
+    debuggerd \
     dhcpcd \
     dhcpcd-run-hooks \
     dnsmasq \
+    dumpstate \
+    dumpsys \
     framework \
     fsck_msdos \
+    gralloc.default \
+    gzip \
     ime \
+    init \
+    input \
     javax.obex \
+    libEGL \
+    libETC1 \
+    libFFTEm \
+    libGLES_android \
+    libGLESv1_CM \
+    libGLESv2 \
     libSR_AudioIn \
     libandroid \
     libandroid_runtime \
     libandroid_servers \
     libaudioeffect_jni \
     libaudioflinger \
+    libbinder \
     libbundlewrapper \
+    libc \
     libcamera_client \
     libcameraservice \
     libchromium_net \
+    libctest \
+    libcutils \
+    libdbus \
     libdl \
     libdrm1 \
     libdrm1_jni \
     libeffects \
+    libgui \
+    libhardware \
+    libhardware_legacy \
     libiprouteutil \
     libjnigraphics \
+    libjpeg \
+    liblog \
+    libm \
     libmedia \
     libmedia_jni \
     libmediaplayerservice \
     libmtp \
     libnetlink \
     libnetutils \
+    libpixelflinger \
+    libpower \
     libreference-ril \
     libreverbwrapper \
     libril \
@@ -72,12 +101,23 @@ PRODUCT_PACKAGES += \
     libstagefright_foundation \
     libstagefright_omx \
     libstagefright_yuv \
+    libstdc++ \
+    libstlport \
+    libsurfaceflinger \
+    libsurfaceflinger_client \
+    libsurfaceflinger_ddmconnection \
     libsystem_server \
+    libsysutils \
+    libthread_db \
+    libui \
     libusbhost \
     libutils \
     libvisualizer \
     libvorbisidec \
+    libwebcore \
     libwpa_client \
+    logcat \
+    logwrapper \
     media \
     media_cmd \
     mediaserver \
@@ -95,11 +135,15 @@ PRODUCT_PACKAGES += \
     schedtest \
     screenshot \
     sdcard \
+    service \
+    servicemanager \
     services \
     settings \
+    surfaceflinger \
     svc \
     system_server \
     tc \
+    toolbox \
     vdc \
     vold \
     webview \
