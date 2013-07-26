@@ -90,7 +90,6 @@ else
                             -Werror=strict-aliasing
 endif
 
-<<<<<<< HEAD
 # Modules can choose to compile some source as thumb. As
 # non-thumb enabled targets are supported, this is treated
 # as a 'hint'. If thumb is not enabled, these files are just
@@ -120,13 +119,6 @@ ifeq ($(ARCH_ARM_HAVE_THUMB_SUPPORT),true)
 else
 TARGET_thumb_CFLAGS := $(TARGET_arm_CFLAGS)
 endif
-=======
-# Modules can choose to compile some source as thumb.
-TARGET_thumb_CFLAGS :=  -mthumb \
-                        -Os \
-                        -fomit-frame-pointer \
-                        -fno-strict-aliasing
->>>>>>> e762d6787bfe2cef470d77fae7afe73a1321a5ea
 
 # Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
 # or in your environment to force a full arm build, even for
@@ -162,11 +154,7 @@ TARGET_GLOBAL_CFLAGS += $(TARGET_ANDROID_CONFIG_CFLAGS)
 # We cannot turn it off blindly since the option is not available
 # in gcc-4.4.x.  We also want to disable sincos optimization globally
 # by turning off the builtin sin function.
-<<<<<<< HEAD
 ifneq ($(filter 4.7 4.8 4.9 4.7.% 4.8.% 4.9.%, $(shell $(TARGET_CC) --version)),)
-=======
-ifneq ($(filter 4.6 4.6.% 4.7 4.7.%, $(TARGET_GCC_VERSION)),)
->>>>>>> e762d6787bfe2cef470d77fae7afe73a1321a5ea
 TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable -fno-builtin-sin \
 			-fno-strict-volatile-bitfields
 endif
