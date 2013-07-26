@@ -128,7 +128,10 @@ PRODUCT_PACKAGES += \
     uiautomator \
     telephony-common \
     mms-common \
-    voip-common
+    voip-common \
+    zoneinfo.dat \
+    zoneinfo.idx \
+    zoneinfo.version
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
@@ -147,7 +150,10 @@ ifeq ($(WITH_HOST_DALVIK),true)
         libjavacore \
         libssl \
         libz-host \
-        dalvik
+        dalvik \
+        zoneinfo.dat \
+        zoneinfo.idx \
+        zoneinfo.version
 endif
 
 ifeq ($(HAVE_SELINUX),true)
