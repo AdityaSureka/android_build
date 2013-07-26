@@ -151,9 +151,9 @@ ifeq ($(WITH_HOST_DALVIK),true)
         libssl \
         libz-host \
         dalvik \
-        zoneinfo.dat \
-        zoneinfo.idx \
-        zoneinfo.version
+        zoneinfo-host.dat \
+        zoneinfo-host.idx \
+        zoneinfo-host.version
 endif
 
 ifeq ($(HAVE_SELINUX),true)
