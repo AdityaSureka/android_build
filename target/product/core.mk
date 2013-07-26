@@ -128,10 +128,7 @@ PRODUCT_PACKAGES += \
     uiautomator \
     telephony-common \
     mms-common \
-    voip-common \
-    zoneinfo.dat \
-    zoneinfo.idx \
-    zoneinfo.version
+    voip-common
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
