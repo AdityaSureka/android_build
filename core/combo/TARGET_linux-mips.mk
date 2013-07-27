@@ -99,11 +99,7 @@ TARGET_GLOBAL_CFLAGS += $(TARGET_ANDROID_CONFIG_CFLAGS)
 # This warning causes dalvik not to build with gcc 4.6+ and -Werror.
 # We cannot turn it off blindly since the option is not available
 # in gcc-4.4.x.
-<<<<<<< HEAD
-ifneq ($(filter 4.6 4.6.% 4.7 4.7.%, $(shell $(TARGET_CC) --version)),)
-=======
 ifneq ($(filter 4.6 4.6.% 4.7 4.7.%, $(TARGET_GCC_VERSION)),)
->>>>>>> e762d6787bfe2cef470d77fae7afe73a1321a5ea
 TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable \
                         -fno-strict-volatile-bitfields
 endif

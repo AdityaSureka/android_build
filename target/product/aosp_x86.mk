@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2009 The Android Open Source Project
+# Copyright 2013 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,17 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_x86.mk)
 
-# This is a build configuration for a full-featured build of the
-# Open-Source part of the tree. It's geared toward a US-centric
-# build quite specifically for the emulator, and might not be
-# entirely appropriate to inherit from for on-device configurations.
-
-PRODUCT_PACKAGES := \
-    VoiceDialer
-
-PRODUCT_PROPERTY_OVERRIDES := \
-    keyguard.no_require_sim=true
-
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
+PRODUCT_NAME := aosp_x86

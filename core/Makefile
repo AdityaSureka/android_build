@@ -167,7 +167,14 @@ $(if $(product_property_overrides_locale_region),,$(word 2, $(call default-local
 endef
 
 BUILDINFO_SH := build/tools/buildinfo.sh
-$(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
+
+ifdef TARGET_SYSTEM_PROP
+system_prop_file := $(TARGET_SYSTEM_PROP)
+else
+system_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
+endif
+
+$(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file)
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
@@ -437,6 +444,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES)
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE),raw)
 	@echo -e ${CL_CYN}"Made boot image: $@"${CL_RST}
+
 endif # ifndef BOARD_CUSTOM_BOOTIMG_MK
 
 else	# TARGET_NO_KERNEL
@@ -661,11 +669,11 @@ endif
 recovery_resources_private := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery/res))
 recovery_root_private := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery/root))
 recovery_resource_deps := $(shell find $(recovery_resources_common) \
-  $(recovery_resources_private) -type f)
-ifdef TARGET_RECOVERY_FSTAB
-recovery_fstab := $(TARGET_RECOVERY_FSTAB)
+  $(recovery_resources_private) $(recovery_root_private) -type f)
+ifneq ($(TARGET_RECOVERY_FSTAB),)
+  recovery_fstab := $(strip $(wildcard $(TARGET_RECOVERY_FSTAB)))
 else
-recovery_fstab := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery.fstab))
+  recovery_fstab := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery.fstab))
 endif
 # Named '.dat' so we don't attempt to use imgdiff for patching it.
 RECOVERY_RESOURCE_ZIP := $(TARGET_OUT)/etc/recovery-resource.dat
@@ -762,6 +770,7 @@ $(TARGET_RECOVERY_ROOT_TIMESTAMP): $(INTERNAL_RECOVERY_FILES) \
 	        > $(TARGET_RECOVERY_ROOT_OUT)/default.prop
 	@echo -e ${CL_YLW}"Modifying default.prop"${CL_RST}
 	$(SED_INPLACE) 's/ro.build.date.utc=.*/ro.build.date.utc=0/g' $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+	$(SED_INPLACE) 's/ro.adb.secure=1//g' $(TARGET_RECOVERY_ROOT_OUT)/default.prop
 	@echo -e ${CL_CYN}"----- Made recovery filesystem --------"$(TARGET_RECOVERY_ROOT_OUT)${CL_RST}
 	@touch $(TARGET_RECOVERY_ROOT_TIMESTAMP)
 
@@ -1273,6 +1282,7 @@ endif
 ifdef BOARD_KERNEL_PAGESIZE
 	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/RECOVERY/pagesize
 endif
+
 	@# Components of the boot image
 	$(hide) mkdir -p $(zip_root)/BOOT
 	$(hide) $(call package_files-copy-root, \
@@ -1443,6 +1453,7 @@ ifeq ($(TARGET_RELEASETOOL_IMG_FROM_TARGET_SCRIPT),)
 else
     IMG_FROM_TARGET_SCRIPT := $(TARGET_RELEASETOOL_IMG_FROM_TARGET_SCRIPT)
 endif
+
 $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	@echo -e ${CL_YLW}"Package:"${CL_RST}" $@"
 	MKBOOTIMG=$(BOARD_CUSTOM_BOOTIMG_MK) \
@@ -1555,10 +1566,17 @@ dalvikfiles: $(INTERNAL_DALVIK_MODULES)
 # -----------------------------------------------------------------
 # The emulator package
 ifeq ($(BUILD_EMULATOR),true)
+
+INSTALLED_QEMU_KERNEL_TARGET := $(PRODUCT_OUT)/kernel-qemu
+
+$(INSTALLED_QEMU_KERNEL_TARGET): $(INSTALLED_KERNEL_TARGET)
+	$(hide) $(ACP) -fp $(INSTALLED_KERNEL_TARGET) $(INSTALLED_QEMU_KERNEL_TARGET)
+
 INTERNAL_EMULATOR_PACKAGE_FILES += \
-        $(HOST_OUT_EXECUTABLES)/emulator$(HOST_EXECUTABLE_SUFFIX) \
-        prebuilts/qemu-kernel/$(TARGET_ARCH)/kernel-qemu \
-        $(INSTALLED_RAMDISK_TARGET) \
+		$(HOST_OUT_EXECUTABLES)/emulator$(HOST_EXECUTABLE_SUFFIX) \
+		$(INSTALLED_QEMU_KERNEL_TARGET) \
+		$(INSTALLED_RAMDISK_TARGET) \
+		$(recovery_ramdisk) \
 		$(INSTALLED_SYSTEMIMAGE) \
 		$(INSTALLED_USERDATAIMAGE_TARGET)
 
@@ -1569,6 +1587,9 @@ INTERNAL_EMULATOR_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 $(INTERNAL_EMULATOR_PACKAGE_TARGET): $(INTERNAL_EMULATOR_PACKAGE_FILES)
 	@echo -e ${CL_YLW}"Package:"${CL_RST}" $@"
 	$(hide) zip -qj $@ $(INTERNAL_EMULATOR_PACKAGE_FILES)
+
+.PHONY: goldfish
+goldfish: $(INTERNAL_EMULATOR_PACKAGE_TARGET)
 
 endif
 # -----------------------------------------------------------------

@@ -378,11 +378,7 @@ class SignApk {
      * more efficient.
      */
     private static void copyFiles(Manifest manifest,
-<<<<<<< HEAD
-        JarFile in, JarOutputStream out, long timestamp) throws IOException {
-=======
                                   JarFile in, JarOutputStream out, long timestamp) throws IOException {
->>>>>>> e762d6787bfe2cef470d77fae7afe73a1321a5ea
         byte[] buffer = new byte[4096];
         int num;
 
@@ -431,100 +427,6 @@ class SignApk {
             if (data.length < 2)
                 throw new IOException("Less than two bytes written to footer");
             write(data, 0, data.length - 2);
-<<<<<<< HEAD
-        }
-
-        public byte[] getTail() {
-            return footer.toByteArray();
-        }
-
-        @Override
-        public void write(byte[] b) throws IOException {
-            write(b, 0, b.length);
-        }
-
-        @Override
-        public void write(byte[] b, int off, int len) throws IOException {
-            if (closing) {
-                // if the jar is about to close, save the footer that will be written
-                footer.write(b, off, len);
-            }
-            else {
-                // write to both output streams. out is the CMSTypedData signer and tee is the file.
-                out.write(b, off, len);
-                tee.write(b, off, len);
-            }
-        }
-
-        @Override
-        public void write(int b) throws IOException {
-            if (closing) {
-                // if the jar is about to close, save the footer that will be written
-                footer.write(b);
-            }
-            else {
-                // write to both output streams. out is the CMSTypedData signer and tee is the file.
-                out.write(b);
-                tee.write(b);
-            }
-        }
-    }
-
-    private static class CMSSigner implements CMSTypedData {
-        private JarFile inputJar;
-        private File publicKeyFile;
-        private X509Certificate publicKey;
-        private PrivateKey privateKey;
-        private String outputFile;
-        private OutputStream outputStream;
-        private final ASN1ObjectIdentifier type;
-        private WholeFileSignerOutputStream signer;
-
-        public CMSSigner(JarFile inputJar, File publicKeyFile, X509Certificate publicKey, PrivateKey privateKey, OutputStream outputStream) {
-            this.inputJar = inputJar;
-            this.publicKeyFile = publicKeyFile;
-            this.publicKey = publicKey;
-            this.privateKey = privateKey;
-            this.outputStream = outputStream;
-            this.type = new ASN1ObjectIdentifier(CMSObjectIdentifiers.data.getId());
-        }
-
-        public Object getContent() {
-            throw new UnsupportedOperationException();
-        }
-
-        public ASN1ObjectIdentifier getContentType() {
-            return type;
-        }
-
-        public void write(OutputStream out) throws IOException {
-            try {
-                signer = new WholeFileSignerOutputStream(out, outputStream);
-                JarOutputStream outputJar = new JarOutputStream(signer);
-
-                Manifest manifest = addDigestsToManifest(inputJar);
-                signFile(manifest, inputJar, publicKeyFile, publicKey, privateKey, outputJar);
-                // Assume the certificate is valid for at least an hour.
-                long timestamp = publicKey.getNotBefore().getTime() + 3600L * 1000;
-                addOtacert(outputJar, publicKeyFile, timestamp, manifest);
-
-                signer.notifyClosing();
-                outputJar.close();
-                signer.finish();
-            }
-            catch (Exception e) {
-                throw new IOException(e);
-            }
-        }
-
-        public void writeSignatureBlock(ByteArrayOutputStream temp) throws IOException,
-               CertificateEncodingException,
-               OperatorCreationException,
-               CMSException {
-            SignApk.writeSignatureBlock(this, publicKey, privateKey, temp);
-        }
-
-=======
         }
 
         public byte[] getTail() {
@@ -623,22 +525,16 @@ class SignApk {
             SignApk.writeSignatureBlock(this, publicKey, privateKey, temp);
         }
 
->>>>>>> e762d6787bfe2cef470d77fae7afe73a1321a5ea
         public WholeFileSignerOutputStream getSigner() {
             return signer;
         }
     }
 
-<<<<<<< HEAD
-    public static void signWholeFile(JarFile inputJar, File publicKeyFile, X509Certificate publicKey, PrivateKey privateKey, OutputStream outputStream) throws Exception {
-        CMSSigner cmsOut = new CMSSigner(inputJar, publicKeyFile, publicKey, privateKey, outputStream);
-=======
     private static void signWholeFile(JarFile inputJar, File publicKeyFile,
                                       X509Certificate publicKey, PrivateKey privateKey,
                                       OutputStream outputStream) throws Exception {
         CMSSigner cmsOut = new CMSSigner(inputJar, publicKeyFile,
                                          publicKey, privateKey, outputStream);
->>>>>>> e762d6787bfe2cef470d77fae7afe73a1321a5ea
 
         ByteArrayOutputStream temp = new ByteArrayOutputStream();
 
@@ -702,18 +598,12 @@ class SignApk {
         temp.writeTo(outputStream);
     }
 
-<<<<<<< HEAD
-    public static void signFile(Manifest manifest, JarFile inputJar, File publicKeyFile, X509Certificate publicKey, PrivateKey privateKey, JarOutputStream outputJar) throws Exception {
-        // Assume the certificate is valid for at least an hour.
-        long timestamp = publicKey.getNotBefore().getTime() + 3600L * 1000;
-=======
     private static void signFile(Manifest manifest, JarFile inputJar,
                                  X509Certificate[] publicKey, PrivateKey[] privateKey,
                                  JarOutputStream outputJar)
         throws Exception {
         // Assume the certificate is valid for at least an hour.
         long timestamp = publicKey[0].getNotBefore().getTime() + 3600L * 1000;
->>>>>>> e762d6787bfe2cef470d77fae7afe73a1321a5ea
 
         JarEntry je;
 
@@ -726,23 +616,6 @@ class SignApk {
         outputJar.putNextEntry(je);
         manifest.write(outputJar);
 
-<<<<<<< HEAD
-        // CERT.SF
-        je = new JarEntry(CERT_SF_NAME);
-        je.setTime(timestamp);
-        outputJar.putNextEntry(je);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        writeSignatureFile(manifest, baos);
-        byte[] signedData = baos.toByteArray();
-        outputJar.write(signedData);
-
-        // CERT.RSA
-        je = new JarEntry(CERT_RSA_NAME);
-        je.setTime(timestamp);
-        outputJar.putNextEntry(je);
-        writeSignatureBlock(new CMSProcessableByteArray(signedData),
-                            publicKey, privateKey, outputJar);
-=======
         int numKeys = publicKey.length;
         for (int k = 0; k < numKeys; ++k) {
             // CERT.SF / CERT#.SF
@@ -763,7 +636,6 @@ class SignApk {
             writeSignatureBlock(new CMSProcessableByteArray(signedData),
                                 publicKey[k], privateKey[k], outputJar);
         }
->>>>>>> e762d6787bfe2cef470d77fae7afe73a1321a5ea
     }
 
     private static void usage() {
@@ -801,31 +673,6 @@ class SignApk {
         FileOutputStream outputFile = null;
 
         try {
-<<<<<<< HEAD
-            File publicKeyFile = new File(args[argstart+0]);
-            X509Certificate publicKey = readPublicKey(publicKeyFile);
-
-            PrivateKey privateKey = readPrivateKey(new File(args[argstart+1]));
-            inputJar = new JarFile(new File(args[argstart+2]), false);  // Don't verify.
-
-            outputFile = new FileOutputStream(args[argstart+3]);
-
-            if (signWholeFile) {
-                SignApk.signWholeFile(inputJar, publicKeyFile, publicKey, privateKey, outputFile);
-            }
-            else {
-                JarOutputStream outputJar = new JarOutputStream(outputFile);
-
-                // For signing .apks, use the maximum compression to make
-                // them as small as possible (since they live forever on
-                // the system partition).  For OTA packages, use the
-                // default compression level, which is much much faster
-                // and produces output that is only a tiny bit larger
-                // (~0.1% on full OTA packages I tested).
-                outputJar.setLevel(9);
-
-                signFile(addDigestsToManifest(inputJar), inputJar, publicKeyFile, publicKey, privateKey, outputJar);
-=======
             File firstPublicKeyFile = new File(args[argstart+0]);
 
             X509Certificate[] publicKey = new X509Certificate[numKeys];
@@ -865,7 +712,6 @@ class SignApk {
 
                 signFile(addDigestsToManifest(inputJar), inputJar,
                          publicKey, privateKey, outputJar);
->>>>>>> e762d6787bfe2cef470d77fae7afe73a1321a5ea
                 outputJar.close();
             }
         } catch (Exception e) {
