@@ -342,7 +342,7 @@ endif
 
 OLD_FLEX := prebuilts/misc/$(HOST_PREBUILT_TAG)/flex/flex-2.5.4a$(HOST_EXECUTABLE_SUFFIX)
 
-ifeq ($(BUILD_OS),darwin)
+ifeq ($(HOST_OS),darwin)
 # Mac OS' screwy version of java uses a non-standard directory layout
 # and doesn't even seem to have tools.jar.  On the other hand, javac seems
 # to be able to magically find the classes in there, wherever they are, so
@@ -367,18 +367,6 @@ ifeq ($(HOST_OS),darwin)
 MD5SUM:=md5 -q
 else
 MD5SUM:=md5sum
-endif
-
-# In-place sed is done different in linux than OS X
-ifeq ($(HOST_OS),darwin)
-GSED:=$(shell which gsed)
-ifeq ($(GSED),)
-SED_INPLACE:=sed -i ''
-else
-SED_INPLACE:=gsed -i
-endif
-else
-SED_INPLACE:=sed -i
 endif
 
 APICHECK_CLASSPATH := $(HOST_JDK_TOOLS_JAR)

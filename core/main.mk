@@ -44,9 +44,10 @@ ifeq (0,$(shell expr $$(echo $(MAKE_VERSION) | sed "s/[^0-9\.].*//") = 3.81))
 ifeq (0,$(shell expr $$(echo $(MAKE_VERSION) | sed "s/[^0-9\.].*//") = 3.82))
 $(warning ********************************************************************************)
 $(warning *  You are using version $(MAKE_VERSION) of make.)
-$(warning *  Android is tested to build with versions 3.81 and 3.82.)
+$(warning *  Android can only be built by versions 3.81 and 3.82.)
 $(warning *  see https://source.android.com/source/download.html)
 $(warning ********************************************************************************)
+$(error stopping)
 endif
 endif
 endif
@@ -327,8 +328,15 @@ ifneq (,$(user_variant))
     # Enable Dalvik lock contention logging for userdebug builds.
     ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500
   else
-    # Disable debugging in plain user builds.
-    enable_target_debugging :=
+    ifeq ($(user_variant),user)
+      # Pick up some extra useful tools
+      tags_to_install += debug
+
+      # Enable Dalvik lock contention logging for userdebug builds.
+      ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=750
+    endif
+    # Enable debugging in plain user builds.
+    enable_target_debugging := true
   endif
 
   # Turn on Dalvik preoptimization for user builds, but only if not
@@ -337,7 +345,7 @@ ifneq (,$(user_variant))
   ifneq (true,$(DISABLE_DEXPREOPT))
     ifeq ($(user_variant),user)
       ifeq ($(HOST_OS),linux)
-        WITH_DEXPREOPT := true
+        WITH_DEXPREOPT := false
       endif
     endif
   endif
@@ -368,6 +376,7 @@ endif # !enable_target_debugging
 
 ifeq ($(TARGET_BUILD_VARIANT),eng)
 tags_to_install := debug eng
+WITH_DEXPREOPT := false
 ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))),)
   # Don't require the setup wizard on eng builds
   ADDITIONAL_BUILD_PROPERTIES := $(filter-out ro.setupwizard.mode=%,\

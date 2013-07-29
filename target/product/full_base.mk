@@ -21,16 +21,7 @@
 
 PRODUCT_PACKAGES := \
     libfwdlockengine \
-    VideoEditor \
     WAPPushManager
-
-
-PRODUCT_PACKAGES += \
-    libvideoeditor_jni \
-    libvideoeditor_core \
-    libvideoeditor_osal \
-    libvideoeditor_videofilters \
-    libvideoeditorplayer
 
 PRODUCT_PACKAGES += \
     Galaxy4 \
@@ -42,8 +33,6 @@ PRODUCT_PACKAGES += \
     PhaseBeam \
     VisualizationWallpapers \
     PhotoTable
-
-include $(SRC_TARGET_DIR)/product/emulator.mk
 
 # Additional settings used in all AOSP builds
 PRODUCT_PROPERTY_OVERRIDES := \

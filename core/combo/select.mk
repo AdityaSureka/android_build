@@ -48,14 +48,9 @@ $(combo_target)HAVE_KERNEL_MODULES := 0
 
 $(combo_target)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
 ifeq ($(USE_MORE_OPT_FLAGS),yes)
-    $(combo_target)RELEASE_CFLAGS := -O3 -g -Wstrict-aliasing=3 -Werror=strict-aliasing
+    $(combo_target)RELEASE_CFLAGS := -O3 -fno-tree-vectorize -fno-inline-functions -fno-unswitch-loops -g -Wstrict-aliasing=3 -Werror=strict-aliasing
 else
-    $(combo_target)RELEASE_CFLAGS := -O2 -fgcse-after-reload -fipa-cp-clone -fpredictive-commoning -fsched-spec-load -funswitch-loops -fvect-cost-model -g -Wstrict-aliasing=3 -Werror=strict-aliasing
-endif
-ifneq ($(combo_target),HOST_)
-$(combo_target)RELEASE_CFLAGS += -Werror=strict-aliasing
-else
-$(combo_target)RELEASE_CFLAGS += -Wno-error=strict-aliasing
+    $(combo_target)RELEASE_CFLAGS := -O2 -g -Wstrict-aliasing=3 -Werror=strict-aliasing
 endif
 # Turn off strict-aliasing if we're building an AOSP variant without the
 # patchset...

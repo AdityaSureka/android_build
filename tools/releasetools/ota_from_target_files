@@ -58,10 +58,8 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   --no_assert <true|false>
       Including this will turn device asserts off.
 
-  --backup <boolean>
-      Enable or disable the execution of backuptool.sh.
-      Disabled by default.
-
+  --override_device <device>
+      Override device-specific asserts. Can be a comma-separated list.
 
 """
 
@@ -99,6 +97,7 @@ OPTIONS.omit_prereq = False
 OPTIONS.extra_script = None
 OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = 3
+OPTIONS.no_assert = False
 OPTIONS.override_device = 'auto'
 OPTIONS.no_assert = False
 OPTIONS.backuptool = False 
@@ -408,11 +407,6 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   device_specific.FullOTA_InstallBegin()
 
-  if OPTIONS.backuptool:
-    script.Mount("/system")
-    script.RunBackup("backup")
-    script.Unmount("/system")
-
   script.ShowProgress(0.5, 0)
 
   if OPTIONS.wipe_user_data:
@@ -470,17 +464,6 @@ def WriteFullOTAPackage(input_zip, output_zip):
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
   script.ShowProgress(0.2, 0)
-
-  script.Print("*******************************************")
-  script.Print("*                                         *")
-  script.Print("*                                         *")
-  script.Print("*           RUNNING BACKUP TOOL *")
-  script.Print("*                                         *")
-  script.Print("*                                         *")
-  script.Print("*******************************************")
-  if OPTIONS.backuptool:
-    script.ShowProgress(0.2, 10)
-    script.RunBackup("restore")
 
   script.ShowProgress(0.2, 10)
   script.WriteRawImage("/boot", "boot.img")
@@ -610,7 +593,12 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       "/tmp/boot.img", "boot.img", OPTIONS.target_tmp, "BOOT")
   updating_boot = (source_boot.data != target_boot.data)
 
-  updating_recovery = False
+  #source_recovery = common.GetBootableImage(
+  #    "/tmp/recovery.img", "recovery.img", OPTIONS.source_tmp, "RECOVERY",
+  #    OPTIONS.source_info_dict)
+  #target_recovery = common.GetBootableImage(
+  #    "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
+  updating_recovery = false
 
   # Here's how we divide up the progress bar:
   #  0.1 for verifying the start state (PatchCheck calls)
@@ -820,8 +808,8 @@ def main(argv):
       OPTIONS.override_device = a
     elif o in ("--worker_threads"):
       OPTIONS.worker_threads = int(a)
-    elif o in ("--backup"):
-      OPTIONS.backuptool = bool(a.lower() == 'true') 
+    elif o in ("--override_device"):
+      OPTIONS.override_device = a
     else:
       return False
     return True
