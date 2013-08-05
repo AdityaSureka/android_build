@@ -203,8 +203,8 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(
 			TARGET_AAPT_CHARACTERISTICS="$(TARGET_AAPT_CHARACTERISTICS)" \
 			$(PRODUCT_BUILD_PROP_OVERRIDES) \
 	        bash $(BUILDINFO_SH) > $@
-	$(hide) if [ -f $(TARGET_DEVICE_DIR)/system.prop ]; then \
-	          cat $(TARGET_DEVICE_DIR)/system.prop >> $@; \
+	$(hide) if [ -f "$(system_prop_file)" ]; then \
+	          cat $(system_prop_file) >> $@; \
 	        fi
 	$(if $(ADDITIONAL_BUILD_PROPERTIES), \
 		$(hide) echo >> $@; \
@@ -615,7 +615,8 @@ $(if $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "vendor_fs_type=$(BOARD_
 $(if $(BOARD_VENDORIMAGE_PARTITION_SIZE),$(hide) echo "vendor_size=$(BOARD_VENDORIMAGE_PARTITION_SIZE)" >> $(1))
 $(if $(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG),$(hide) echo "extfs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG)" >> $(1))
 $(if $(mkyaffs2_extra_flags),$(hide) echo "mkyaffs2_extra_flags=$(mkyaffs2_extra_flags)" >> $(1))
-$(if $(filter true, $(strip $(HAVE_SELINUX))), echo "selinux_fc=$(TARGET_ROOT_OUT)/file_contexts" >> $(1))
+$(hide) echo "selinux_fc=$(SELINUX_FC)" >> $(1)
+$(if $(2),$(hide) $(foreach kv,$(2),echo "$(kv)" >> $(1);))
 endef
 
 # -----------------------------------------------------------------
@@ -1389,22 +1390,16 @@ else
     OTA_FROM_TARGET_SCRIPT := $(TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT)
 endif
 
-ifeq ($(TARGET_OTA_ASSERT_DEVICE),)
-    $(INTERNAL_OTA_PACKAGE_TARGET): override_device := auto
-else
-    $(INTERNAL_OTA_PACKAGE_TARGET): override_device := $(TARGET_OTA_ASSERT_DEVICE)
-endif
-
 ifeq ($(TARGET_OTA_ASSERT_SKIP),true)
     $(INTERNAL_OTA_PACKAGE_TARGET): skip_assert := true
 else
     $(INTERNAL_OTA_PACKAGE_TARGET): skip_assert := false
 endif
 
-ifeq ($(ILLUSION_BUILD),true)
-    $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
+ifeq ($(TARGET_OTA_ASSERT_DEVICE),)
+    $(INTERNAL_OTA_PACKAGE_TARGET): override_device := auto
 else
-    $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
+    $(INTERNAL_OTA_PACKAGE_TARGET): override_device := $(TARGET_OTA_ASSERT_DEVICE)
 endif
 
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
@@ -1415,7 +1410,6 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	   -k $(KEY_CERT_PAIR) \
 	   --no_assert=$(skip_assert) \
 	   --override_device=$(override_device) \
-	   --backup=$(backuptool) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
 .PHONY: otapackage illusion

@@ -26,17 +26,12 @@ PRODUCT_PACKAGES := \
 	Gallery \
 	Music \
 	Mms \
-	OpenWnn \
-	libWnnEngDic \
-	libWnnJpnDic \
-	libwnndict \
 	Phone \
 	PinyinIME \
 	libjni_pinyinime \
 	Protips \
 	SoftKeyboard \
 	SystemUI \
-	Launcher2 \
 	Development \
 	DevelopmentSettings \
 	DrmProvider \
@@ -52,13 +47,11 @@ PRODUCT_PACKAGES := \
 	ApiDemos \
 	GestureBuilder \
 	CubeLiveWallpapers \
-	QuickSearchBox \
 	WidgetPreview \
 	librs_jni \
 	ConnectivityTest \
 	GpsLocationTest \
 	CalendarProvider \
-	Calendar \
 	SmokeTest \
 	SmokeTestApp \
 	rild \

@@ -170,15 +170,7 @@ TARGET_GLOBAL_LDFLAGS += \
 			-Wl,--icf=safe \
 			$(arch_variant_ldflags)
 
-# We only need thumb interworking in cases where thumb support
-# is available in the architecture, and just to be sure, (and
-# since sometimes thumb-interwork appears to be default), we
-# specifically disable when thumb support is unavailable.
-ifeq ($(ARCH_ARM_HAVE_THUMB_SUPPORT),true)
 TARGET_GLOBAL_CFLAGS += -mthumb-interwork
-else
-TARGET_GLOBAL_CFLAGS += -mno-thumb-interwork
-endif
 
 TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 ifneq ($(DEBUG_NO_STDCXX11),yes)
@@ -285,11 +277,6 @@ TARGET_STRIP_MODULE:=true
 TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
 
 TARGET_CUSTOM_LD_COMMAND := true
-
-# Enable the Dalvik JIT compiler if not already specified.
-ifeq ($(strip $(WITH_JIT)),)
-    WITH_JIT := true
-endif
 
 define transform-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \

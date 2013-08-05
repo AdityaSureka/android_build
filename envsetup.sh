@@ -141,11 +141,11 @@ function setpaths()
     export ANDROID_EABI_TOOLCHAIN=
     local ARCH=$(get_build_var TARGET_ARCH)
     case $ARCH in
-        x86) toolchaindir=x86/i686-linux-android-4.6/bin
+        x86) toolchaindir=x86/i686-linux-android-$targetgccversion/bin
             ;;
-        arm) toolchaindir=arm/arm-linux-androideabi-4.9/bin
+        arm) toolchaindir=arm/arm-linux-androideabi-$targetgccversion/bin
             ;;
-        mips) toolchaindir=mips/mipsel-linux-android-4.6/bin
+        mips) toolchaindir=mips/mipsel-linux-android-$targetgccversion/bin
             ;;
         *)
             echo "Can't find toolchain for unknown architecture: $ARCH"
@@ -924,7 +924,7 @@ function gdbclient()
        echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
        echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
-       $ANDROID_TOOLCHAIN/$GDB -x "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
+       gdbwrapper "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
   else
        echo "Unable to determine build system output dir."
    fi
