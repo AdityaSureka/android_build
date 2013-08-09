@@ -67,42 +67,49 @@ else
 endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
-
 ifeq ($(USE_MORE_OPT_FLAGS),yes)
     TARGET_arm_CFLAGS :=    -O3 \
-                            -fno-tree-vectorize \
-                            -fno-inline-functions \
-                            -fomit-frame-pointer \
-                            -fstrict-aliasing \
-                            -Wstrict-aliasing=3 \
-                            -Werror=strict-aliasing
-else
-    TARGET_arm_CFLAGS :=    -O2 \
                             -fomit-frame-pointer \
                             -fstrict-aliasing \
                             -Wstrict-aliasing=3 \
                             -Werror=strict-aliasing \
-                            -funswitch-loops
+                            -funswitch-loops \
+                            -fno-tree-vectorize
+else
+    TARGET_arm_CFLAGS :=    -O2 \
+                            -fgcse-after-reload \
+                            -fipa-cp-clone \
+                            -fpredictive-commoning \
+                            -fsched-spec-load \
+                            -funswitch-loops \
+                            -fvect-cost-model \
+                            -fomit-frame-pointer \
+                            -fstrict-aliasing \
+                            -Wstrict-aliasing=3 \
+                            -Werror=strict-aliasing
 endif
 
 # Modules can choose to compile some source as thumb.
 ifeq ($(USE_MORE_OPT_FLAGS),yes)
-    TARGET_thumb_CFLAGS :=  -mthumb \
-                            -O3 \
-                            -fno-tree-vectorize \
-                            -fno-inline-functions \
-                            -fno-unswitch-loops \
-                            -fomit-frame-pointer \
-                            -fstrict-aliasing \
-                            -Wstrict-aliasing=3 \
-                            -Werror=strict-aliasing
-else
-    TARGET_thumb_CFLAGS :=  -mthumb \
-                            -Os \
-                            -fomit-frame-pointer \
-                            -fstrict-aliasing \
-                            -Wstrict-aliasing=3 \
-                            -Werror=strict-aliasing
+        TARGET_thumb_CFLAGS :=  -mthumb \
+                                -O3 \
+                                -fomit-frame-pointer \
+                                -fstrict-aliasing \
+                                -Wstrict-aliasing=3 \
+                                -Werror=strict-aliasing
+    else
+        TARGET_thumb_CFLAGS :=  -mthumb \
+                                -Os \
+                                -fgcse-after-reload \
+                                -fipa-cp-clone \
+                                -fpredictive-commoning \
+                                -fsched-spec-load \
+                                -funswitch-loops \
+                                -fvect-cost-model \
+                                -fomit-frame-pointer \
+                                -fstrict-aliasing \
+                                -Wstrict-aliasing=3 \
+                                -Werror=strict-aliasing
 endif
 
 # Turn off strict-aliasing if we're building an AOSP variant without the
